@@ -29,7 +29,7 @@ export class FsHelper {
     for (const file of files) {
       const filePath: string = path.join(process.cwd(), 'uploads', file);
       if (fs.existsSync(filePath)) {
-        await fsPromises.unlink(filePath); // Promise bilan ishlash uchun async ishlatildi
+        await fsPromises.unlink(filePath); 
       }
     }
 

@@ -1,3 +1,5 @@
 export * from './createUser.dto'
 export * from './login.dto'
 export * from './register.dto'
+export * from './get-all-query.dto'
+export * from './update-user.dto'

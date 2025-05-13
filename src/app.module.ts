@@ -4,6 +4,10 @@ import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize'
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { UserModule } from './modules';
+import { APP_GUARD } from '@nestjs/core';
+import { CheckAuthGuard, CheckRolesGuard } from './guards';
+import { JwtHelper } from './helpers';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -28,6 +32,18 @@ import { UserModule } from './modules';
       autoLoadModels: true
     }),
     UserModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: CheckAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: CheckRolesGuard,
+    },
+    JwtHelper,
+    JwtService,
   ],
 })
 export class AppModule {}

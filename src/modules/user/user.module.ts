@@ -6,6 +6,7 @@ import { UserController } from "./user.controller";
 import { UserService } from "./user.service";
 import { AuthController } from "./models/auth.controller";
 import { AuthService } from "./models/auth.service";
+import { FsHelper, JwtHelper } from "src/helpers";
 
 @Module({
     imports: [ 
@@ -15,7 +16,7 @@ import { AuthService } from "./models/auth.service";
             signOptions: { expiresIn: '1h' },
     })],
     controllers: [UserController, AuthController],
-    providers: [UserService, AuthService]
+    providers: [UserService, AuthService, FsHelper, JwtHelper]
 })
 
 export class UserModule {}
