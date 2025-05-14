@@ -12,6 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: process.env.NODE_ENV?.trim() === 'test' ? '.env.test' : 'env',
       isGlobal: true,
     }),
     ServeStaticModule.forRoot({

@@ -1,0 +1,26 @@
+{
+    "present": "ts-jest",
+    "testEnvironment": "node",
+    "transform": {
+        "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "testRegex": ".*\\.e2e-spec\\.ts$",
+    "moduleFileExtensions": ["js", "json", "ts"],
+    "rootDir": "../",
+    "moduleNameMapper": {
+        "^@helpers$": "<rootDir>/src/helpers",
+        "^@decorators$": "<rootDir>/src/decorators",
+        "^@modules$": "<rootDir>/src/modules",
+        "^@guards$": "<rootDir>/src/guards"
+    },
+    "collectCoverage": false,
+    "coverageDirectory": "./coverage",
+    "collectCoverageFrom": [
+        "src/**/*.{ts,js}",
+        "!src/**/*.module.ts",
+        "!src/main.ts"
+    ],
+    "maxWorkers": 2,
+    "testTimeout": 30000
+
+}

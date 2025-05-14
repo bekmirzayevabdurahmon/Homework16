@@ -3,8 +3,8 @@ import { UserService } from "./user.service";
 import { CreateUserDto, UpdateUserDto } from "./dtos";
 import { ApiConsumes, ApiOperation } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { FileValidationPipe } from "src/pipes";
-import { Protected, Roles } from "src/decorators";
+import { FileValidationPipe } from "../../pipes";
+import { Protected, Roles } from "../../decorators";
 import { UserRoles } from "./enums";
 import { GetAllUsersQueryDto } from "./dtos/get-all-query.dto";
 

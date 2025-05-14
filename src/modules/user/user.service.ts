@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { User } from "./models/userModel";
 import { CreateUserDto, UpdateUserDto } from "./dtos";
@@ -6,9 +6,9 @@ import { v4 as uuid4 } from "uuid"
 import * as path from "node:path"
 import * as fs from "node:fs"
 import * as bcrypt from 'bcryptjs';
-import { FsHelper } from "src/helpers";
+import { FsHelper } from "../../helpers";
 import { v4 as uuidv4 } from 'uuid'
-import { Op } from "sequelize";
+import { Op, UniqueConstraintError } from "sequelize";
 import { GetAllUsersQueryDto } from "./dtos/get-all-query.dto";
 
 @Injectable()
@@ -54,21 +54,23 @@ async getAll(queries: GetAllUsersQueryDto) {
     };
   }
 
-    async create(payload: CreateUserDto, file?: Express.Multer.File) {
+async create(payload: CreateUserDto, file?: Express.Multer.File) {
+    try {
         let imageName: string | undefined;
-        if(file){
-            const uploadDir = path.join(process.cwd(), 'uploads')
-            if(!fs.existsSync(uploadDir)) {
-                fs.mkdirSync(uploadDir, { recursive: true});
+        if (file) {
+            const uploadDir = path.join(process.cwd(), 'uploads');
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir, { recursive: true });
             }
-            const randomName = uuid4()
+            const randomName = uuid4();
             const ext = path.extname(file.originalname);
-            const fileName = `${randomName}${ext}`
+            const fileName = `${randomName}${ext}`;
             const uploadPath = path.join(uploadDir, fileName);
             fs.writeFileSync(uploadPath, file.buffer);
-            imageName = fileName
+            imageName = fileName;
         }
-        const passwordHash = await bcrypt.hash(payload.password, 10)
+
+        const passwordHash = await bcrypt.hash(payload.password, 10);
         const user = await this.userModel.create({
             name: payload.name,
             email: payload.email,
@@ -76,11 +78,18 @@ async getAll(queries: GetAllUsersQueryDto) {
             age: payload.age,
             image: imageName,
         });
-        return{
+
+        return {
             message: "success",
             data: user
+        };
+    } catch (error) {
+        if (error instanceof UniqueConstraintError) {
+            throw new ConflictException("Bunday email'lik foydalanuvchi bor");
         }
+        throw error;
     }
+}
 
     async updateUser(id: number, payload: UpdateUserDto) {
         const user = await this.userModel.findByPk(id);
