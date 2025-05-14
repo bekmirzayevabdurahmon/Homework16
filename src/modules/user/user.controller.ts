@@ -35,7 +35,7 @@ export class UserController{
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('image'))
     @Patch(':id')
-    @Protected(true)
+    @Protected(false)
     @Roles([UserRoles.ADMIN, UserRoles.SUPER_ADMIN, UserRoles.USER])
     async update(@Param('id', ParseIntPipe) id: number, @Body() payload: UpdateUserDto) {
         return await this.service.updateUser(id, payload);
@@ -45,7 +45,7 @@ export class UserController{
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('image'))
     @Patch(':id/image')
-    @Protected(true)
+    @Protected(false)
     @Roles([UserRoles.ADMIN, UserRoles.SUPER_ADMIN, UserRoles.USER])
     async updateImage(@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.Multer.File) {
         return await this.service.updateImage(id, file);

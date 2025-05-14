@@ -36,12 +36,11 @@ export class AuthService {
 
     async login(payload: LoginDto) {
         const user = await this.#_checkUserByEmail(payload.email);
-        console.log(user.password)
-        if(!user.password) {
+        if(!user.dataValues.password) {
             throw new ConflictException("User paroli mavjud emas")
         }
         
-        const isUserMatch = bcrypt.compareSync(payload.password, user.password);
+        const isUserMatch = bcrypt.compareSync(payload.password, user.dataValues.password);
 
         if(!isUserMatch) {
             throw new ConflictException('Parol xato');

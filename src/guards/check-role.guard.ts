@@ -15,28 +15,33 @@ import { UserRoles } from 'src/modules/user/enums';
     constructor(private reflector: Reflector) {}
   
 canActivate(
-    context: ExecutionContext,
+  context: ExecutionContext,
 ): boolean | Promise<boolean> | Observable<boolean> {
-    const ctx = context.switchToHttp();
-    const request = ctx.getRequest<
-        Request & { role?: UserRoles; userId?: string }
-    >();
-    const roles = this.reflector.getAllAndOverride<UserRoles[]>(ROLES_KEY, [
-        context.getHandler(),
-        context.getClass(),
-        ]);
+  const ctx = context.switchToHttp();
+  const request = ctx.getRequest<Request & { role?: UserRoles; userId?: string }>();
 
-        if (!request.role) {
-            throw new ForbiddenException('Foydalanuvchi roli aniqlanmadi');
-        }
+  const roles = this.reflector.getAllAndOverride<UserRoles[]>(ROLES_KEY, [
+    context.getHandler(),
+    context.getClass(),
+  ]);
 
-        let userRole = request.role;
+  // Agar route uchun hech qanday rol belgilanmagan bo‘lsa, ruxsat beriladi
+  if (!roles || roles.length === 0) {
+    return true;
+  }
 
-        if (!roles.includes(userRole)) {
-            throw new ForbiddenException('Siz bu amalni bajara olmaysiz');
-        } 
+  // Foydalanuvchi roli aniqlanmagan bo‘lsa
+  if (!request.role) {
+    throw new ForbiddenException('Foydalanuvchi roli aniqlanmadi');
+  }
 
-        return true;
-    }
+  const userRole = request.role;
+
+  // Foydalanuvchi roli ruxsat etilganlar ichida yo‘q bo‘lsa
+  if (!roles.includes(userRole)) {
+    throw new ForbiddenException('Siz bu amalni bajara olmaysiz');
+  }
+
+  return true;
+ }
 }
-  
